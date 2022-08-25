@@ -11,10 +11,14 @@ docker-build:
 	-t ${DOCKER_IMAGE_URI} .
 
 docker-ssh:
-	docker run --privileged -it --rm --entrypoint='/bin/bash' ${DOCKER_IMAGE_URI}
+	docker run --privileged -it --rm --entrypoint='/bin/bash'  -v ${PWD}/src:/home/podman/src ${DOCKER_IMAGE_URI}
 
 docker-podman-run-test:
-	docker run --privileged $(DOCKER_IMAGE_URI) podman run ubi8 echo hello
+	docker run --rm --privileged -v ${PWD}/mycontainers:/home/podman/.local/share/containers $(DOCKER_IMAGE_URI) podman run ubi8 echo hello
 
-podman-test:
-	podman run $(DOCKER_IMAGE_URI) podman run ubi8 echo
+docker-podman-build-test:
+	docker run --rm --privileged -v ${PWD}/src:/home/podman/src $(DOCKER_IMAGE_URI) podman build -t hello-world ./src
+
+docker-podman-build-ODC:
+	docker run --rm --privileged -v ${PWD}/src:/home/podman/src $(DOCKER_IMAGE_URI) podman build -t hello-world ./src -f Dockerfile.owas_dependency_check
+
