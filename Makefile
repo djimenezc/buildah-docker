@@ -1,13 +1,13 @@
 VERSION ?= latest
 
 DOCKER_HUB ?= docker.io
-DOCKER_IMAGE_NAME=djimenezc/buildah
+DOCKER_IMAGE_NAME=djimenezc/podman
 DOCKER_IMAGE_ID = $(DOCKER_HUB)/$(DOCKER_IMAGE_NAME)
 DOCKER_IMAGE_URI=${DOCKER_IMAGE_ID}:${VERSION}
 
 docker-build:
 	docker buildx build \
-	--platform=linux/arm64 \
+	--platform=linux/arm64,linux/amd64,linux/arm64/v8 \
 	-t ${DOCKER_IMAGE_URI} .
 
 docker-ssh:
