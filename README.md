@@ -1,5 +1,7 @@
 # Build/run images within a container
 
+[![build and push](https://github.com/djimenezc/podman-docker/actions/workflows/buildImage.yml/badge.svg)](https://github.com/djimenezc/podman-docker/actions/workflows/buildImage.yml)
+
 Run podman within a container
 
 Podman can be run in multiple ways, rootful and rootless. We end up with people wanting to run various combinations of rootful and rootless Podman:
