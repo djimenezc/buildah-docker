@@ -20,7 +20,7 @@ docker-podman-build-test:
 	docker run --rm --privileged -v ${PWD}/src:/home/podman/src $(DOCKER_IMAGE_URI) podman build -t hello-world ./src
 
 docker-podman-build-ODC:
-	docker run --rm --privileged -v ${PWD}/src:/home/podman/src $(DOCKER_IMAGE_URI) podman build -t hello-world ./src -f Dockerfile.owas_dependency_check
+	docker run --rm --privileged -v ${PWD}/src:/home/podman/src $(DOCKER_IMAGE_URI) podman build -t ODC ./src -f Dockerfile.owasp_dependency_check
 
 docker-podman-build-ODC-multiarch:
 	docker run --rm --privileged -v ${PWD}/src:/home/podman $(DOCKER_IMAGE_URI) /home/podman/build-multiarch.sh
