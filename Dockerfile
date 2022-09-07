@@ -5,7 +5,7 @@ ARG TARGETARCH
 ARG PODMAN_PACKAGE=podman_4.2.0+ds1-3_${TARGETARCH}.deb
 
 RUN apt-get update && \
-    apt-get install -y buildah skopeo awscli conmon fuse-overlayfs slirp4netns make
+    apt-get install -y buildah skopeo awscli conmon fuse-overlayfs slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm
 
 ADD "http://ftp.us.debian.org/debian/pool/main/libp/libpod/${PODMAN_PACKAGE}" "${PODMAN_PACKAGE}"
 RUN dpkg --install ${PODMAN_PACKAGE} && \
