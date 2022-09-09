@@ -5,9 +5,11 @@ DOCKER_IMAGE_NAME=djimenezc/podman
 DOCKER_IMAGE_ID = $(DOCKER_HUB)/$(DOCKER_IMAGE_NAME)
 DOCKER_IMAGE_URI=${DOCKER_IMAGE_ID}:${VERSION}
 
+DOCKER_PLATFORMS ?= linux/arm64,linux/amd64,linux/arm64/v8
+
 docker-build:
 	docker buildx build \
-	--platform=linux/arm64,linux/amd64,linux/arm64/v8 \
+	--platform=$(DOCKER_PLATFORMS) \
 	-t ${DOCKER_IMAGE_URI} .
 
 docker-ssh:
