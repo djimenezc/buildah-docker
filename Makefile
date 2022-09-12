@@ -26,3 +26,9 @@ docker-podman-build-ODC:
 
 docker-podman-build-ODC-multiarch:
 	docker run --rm --privileged -v ${PWD}/src:/home/podman $(DOCKER_IMAGE_URI) /home/podman/build-multiarch.sh
+
+docker-build-arm64:
+	docker build \
+	--platform=linux/arm64 \
+	--progress=plain \
+	-t ${DOCKER_IMAGE_ID}:arm64 .

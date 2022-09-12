@@ -5,12 +5,22 @@ FROM ubuntu:22.04
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TARGETARCH
 ARG PODMAN_PACKAGE=podman_4.2.0+ds1-3_${TARGETARCH}.deb
+ARG TARGETARCH
 
 RUN apt-get update && \
-    apt-get install -y curl buildah skopeo awscli conmon fuse-overlayfs \
-    slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm \
-    jq && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y  jq curl unzip \
+    buildah skopeo conmon fuse-overlayfs \
+    slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm && \
+    if [ "${TARGETARCH}" = "arm64" ]; \
+	then export ARCH_ENV=aarch64; \
+	else export ARCH_ENV=x86_64; \
+	fi && \
+	curl "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH_ENV}.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    aws --version && \
+    apt remove -y unzip && \
+    rm -rf /var/lib/apt/lists/* ./aws awscliv2.zip
 
 ADD "http://ftp.us.debian.org/debian/pool/main/libp/libpod/${PODMAN_PACKAGE}" "${PODMAN_PACKAGE}"
 RUN dpkg --install ${PODMAN_PACKAGE} && \
