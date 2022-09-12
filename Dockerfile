@@ -1,3 +1,5 @@
+FROM bitnami/kubectl as kubectl
+
 FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -7,7 +9,8 @@ ARG PODMAN_PACKAGE=podman_4.2.0+ds1-3_${TARGETARCH}.deb
 RUN apt-get update && \
     apt-get install -y curl buildah skopeo awscli conmon fuse-overlayfs \
     slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm \
-    containernetworking-plugins lsb-release ca-certificates gnupg jq
+    containernetworking-plugins lsb-release ca-certificates gnupg jq && \
+    rm -rf /var/lib/apt/lists/*
 
 ADD "http://ftp.us.debian.org/debian/pool/main/libp/libpod/${PODMAN_PACKAGE}" "${PODMAN_PACKAGE}"
 RUN dpkg --install ${PODMAN_PACKAGE} && \
@@ -32,6 +35,8 @@ RUN mkdir -p /var/lib/shared/overlay-images /var/lib/shared/overlay-layers /var/
 RUN mkdir -p /home/podman/.local/share/containers/storage /home/podman/images
 
 RUN chown podman:podman -R /home/podman
+
+COPY --from=kubectl /opt/bitnami/kubectl/bin/kubectl /usr/local/bin/
 
 ENV _CONTAINERS_USERNS_CONFIGURED=""
 
