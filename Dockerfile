@@ -1,5 +1,3 @@
-FROM bitnami/kubectl:1.24.4 as kubectl
-
 FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -45,8 +43,6 @@ RUN mkdir -p /var/lib/shared/overlay-images /var/lib/shared/overlay-layers /var/
 RUN mkdir -p /home/podman/.local/share/containers/storage /home/podman/images
 
 RUN chown podman:podman -R /home/podman
-
-COPY --from=kubectl /opt/bitnami/kubectl/bin/kubectl /usr/local/bin/
 
 ENV _CONTAINERS_USERNS_CONFIGURED=""
 
