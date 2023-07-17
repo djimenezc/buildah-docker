@@ -16,11 +16,20 @@ RUN echo \
     https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/Debian_Testing/ /" \
   | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list > /dev/null
 
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+     chmod a+r /etc/apt/keyrings/docker.gpg
+
+RUN echo \
+      "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+      tee /etc/apt/sources.list.d/docker.list > /dev/null
+
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y  jq curl unzip \
+    apt-get install -y  jq unzip \
     buildah skopeo podman conmon fuse-overlayfs \
-    slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm && \
+    slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm \
+    docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
     if [ "${TARGETARCH}" = "arm64" ]; \
 	then export ARCH_ENV=aarch64; \
 	else export ARCH_ENV=x86_64; \
