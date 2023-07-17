@@ -8,7 +8,7 @@ ARG TARGETARCH
 RUN apt-get update && \
     apt-get install -y  jq curl unzip \
     buildah skopeo conmon fuse-overlayfs \
-    slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm && \
+    slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm libsubid4 && \
     if [ "${TARGETARCH}" = "arm64" ]; \
 	then export ARCH_ENV=aarch64; \
 	else export ARCH_ENV=x86_64; \
