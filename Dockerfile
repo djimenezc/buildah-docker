@@ -8,7 +8,7 @@ ARG TARGETARCH
 RUN apt-get update && \
     apt-get install -y  jq curl unzip \
     buildah skopeo conmon fuse-overlayfs \
-    slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm libsubid4 && \
+    slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm && \
     if [ "${TARGETARCH}" = "arm64" ]; \
 	then export ARCH_ENV=aarch64; \
 	else export ARCH_ENV=x86_64; \
@@ -20,27 +20,43 @@ RUN apt-get update && \
     apt remove -y unzip && \
     rm -rf /var/lib/apt/lists/* ./aws awscliv2.zip
 
-ADD "http://ftp.us.debian.org/debian/pool/main/libp/libpod/${PODMAN_PACKAGE}" "${PODMAN_PACKAGE}"
-RUN dpkg --install ${PODMAN_PACKAGE} && \
-    rm ${PODMAN_PACKAGE}
+#ADD "http://ftp.us.debian.org/debian/pool/main/libp/libpod/${PODMAN_PACKAGE}" "${PODMAN_PACKAGE}"
+#RUN dpkg --install ${PODMAN_PACKAGE} && \
+#    rm ${PODMAN_PACKAGE}
+
+RUN mkdir -p /etc/apt/keyrings
+
+# Debian Testing/Bookworm
+RUN curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/Debian_Testing/Release.key \
+  | gpg --dearmor \
+  | sudo tee /etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg > /dev/null
+RUN echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg]\
+    https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/Debian_Testing/ /" \
+  | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list > /dev/null
+
+# Install Podman
+RUN apt-get update && \
+	apt-get -y upgrade && \
+	apt-get -y install podman
 
 RUN useradd podman; \
 echo podman:10000:5000 > /etc/subuid; \
 echo podman:10000:5000 > /etc/subgid;
 
-VOLUME /var/lib/containers
-VOLUME /home/podman/.local/share/containers
-
-ADD https://raw.githubusercontent.com/containers/libpod/master/contrib/podmanimage/stable/containers.conf /etc/containers/containers.conf
-ADD https://raw.githubusercontent.com/containers/libpod/master/contrib/podmanimage/stable/podman-containers.conf /home/podman/.config/containers/containers.conf
-COPY ./config/storage.conf /etc/containers/storage.conf
-
-# chmod containers.conf and adjust storage.conf to enable Fuse storage.
-RUN chmod 644 /etc/containers/containers.conf; \
- sed -i -e 's|^#mount_program|mount_program|g' -e '/additionalimage.*/a "/var/lib/shared",' -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' /etc/containers/storage.conf
-RUN mkdir -p /var/lib/shared/overlay-images /var/lib/shared/overlay-layers /var/lib/shared/vfs-images /var/lib/shared/vfs-layers; touch /var/lib/shared/overlay-images/images.lock; touch /var/lib/shared/overlay-layers/layers.lock; touch /var/lib/shared/vfs-images/images.lock; touch /var/lib/shared/vfs-layers/layers.lock
-
-RUN mkdir -p /home/podman/.local/share/containers/storage /home/podman/images
+#VOLUME /var/lib/containers
+#VOLUME /home/podman/.local/share/containers
+#
+#ADD https://raw.githubusercontent.com/containers/libpod/master/contrib/podmanimage/stable/containers.conf /etc/containers/containers.conf
+#ADD https://raw.githubusercontent.com/containers/libpod/master/contrib/podmanimage/stable/podman-containers.conf /home/podman/.config/containers/containers.conf
+#COPY ./config/storage.conf /etc/containers/storage.conf
+#
+## chmod containers.conf and adjust storage.conf to enable Fuse storage.
+#RUN chmod 644 /etc/containers/containers.conf; \
+# sed -i -e 's|^#mount_program|mount_program|g' -e '/additionalimage.*/a "/var/lib/shared",' -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' /etc/containers/storage.conf
+#RUN mkdir -p /var/lib/shared/overlay-images /var/lib/shared/overlay-layers /var/lib/shared/vfs-images /var/lib/shared/vfs-layers; touch /var/lib/shared/overlay-images/images.lock; touch /var/lib/shared/overlay-layers/layers.lock; touch /var/lib/shared/vfs-images/images.lock; touch /var/lib/shared/vfs-layers/layers.lock
+#
+#RUN mkdir -p /home/podman/.local/share/containers/storage /home/podman/images
 
 RUN chown podman:podman -R /home/podman
 
