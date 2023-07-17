@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TARGETARCH
-ARG PODMAN_PACKAGE=podman_4.2.0+ds1-3_${TARGETARCH}.deb
+ARG PODMAN_PACKAGE=podman_4.4.0+ds1-1_${TARGETARCH}.deb
 ARG TARGETARCH
 
 RUN apt-get update && \
