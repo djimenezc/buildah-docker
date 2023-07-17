@@ -29,7 +29,7 @@ RUN mkdir -p /etc/apt/keyrings
 # Debian Testing/Bookworm
 RUN curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/Debian_Testing/Release.key \
   | gpg --dearmor \
-  | sudo tee /etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg > /dev/null
+  | tee /etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg > /dev/null
 RUN echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg]\
     https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/Debian_Testing/ /" \
