@@ -58,9 +58,9 @@ RUN apt-get update && \
 #
 #RUN mkdir -p /home/podman/.local/share/containers/storage /home/podman/images
 
-RUN chown podman:podman -R /home/podman
-
-ENV _CONTAINERS_USERNS_CONFIGURED=""
-
-WORKDIR /home/podman
+#RUN chown podman:podman -R /home/podman
+#
+#ENV _CONTAINERS_USERNS_CONFIGURED=""
+#
+#WORKDIR /home/podman
 
