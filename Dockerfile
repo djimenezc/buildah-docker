@@ -40,9 +40,9 @@ RUN apt-get update && \
 	apt-get -y upgrade && \
 	apt-get -y install podman
 
-RUN useradd podman; \
-echo podman:10000:5000 > /etc/subuid; \
-echo podman:10000:5000 > /etc/subgid;
+#RUN useradd podman; \
+#echo podman:10000:5000 > /etc/subuid; \
+#echo podman:10000:5000 > /etc/subgid;
 
 #VOLUME /var/lib/containers
 #VOLUME /home/podman/.local/share/containers
