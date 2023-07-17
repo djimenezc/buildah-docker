@@ -7,6 +7,9 @@ ARG TARGETARCH
 
 RUN mkdir -p /etc/apt/keyrings
 
+RUN apt-get update && \
+	apt-get install -y ca-certificates curl gnupg
+
 # Debian Testing/Bookworm
 RUN curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/Debian_Testing/Release.key \
   | gpg --dearmor \
