@@ -31,7 +31,7 @@ export PS1="\[${COLOR_BLUE}\]devspace\[${COLOR_RESET}\] ./\W \[${COLOR_BLUE}\]\\
 if [ -z "$BASH" ]; then export PS1="$ "; fi
 
 # Include project's bin/ folder in PATH
-export PATH="./bin:$PATH"
+export PATH="/home/ubuntu/bin:$PATH"
 
 # Open shell
 bash --norc
