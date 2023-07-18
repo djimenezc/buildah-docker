@@ -29,6 +29,7 @@ docker-podman-build-ODC-multiarch:
 
 docker-build-arm64:
 	docker build \
+	-f Dockerfile \
 	--platform=linux/arm64 \
 	--progress=plain \
 	-t ${DOCKER_IMAGE_ID}:arm64 .
