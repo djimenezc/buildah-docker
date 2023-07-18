@@ -19,18 +19,11 @@ RUN echo \
     https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/Debian_Testing/ /" \
   | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list > /dev/null
 
-#RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-#     chmod a+r /etc/apt/keyrings/docker.gpg
-#
-#RUN echo \
-#      "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-#      "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-#      tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y  jq unzip \
-    buildah skopeo podman libgpgme11 conmon fuse-overlayfs \
+    buildah skopeo podman libgpgme11 libyajl2 conmon fuse-overlayfs \
     slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm && \
 #    docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
     if [ "${TARGETARCH}" = "arm64" ]; \
@@ -53,11 +46,11 @@ VOLUME /home/podman/.local/share/containers
 
 ADD https://raw.githubusercontent.com/containers/libpod/master/contrib/podmanimage/stable/containers.conf /etc/containers/containers.conf
 ADD https://raw.githubusercontent.com/containers/libpod/master/contrib/podmanimage/stable/podman-containers.conf /home/podman/.config/containers/containers.conf
-COPY ./config/storage.conf /etc/containers/storage.conf
+#COPY ./config/storage.conf /etc/containers/storage.conf
 
 # chmod containers.conf and adjust storage.conf to enable Fuse storage.
 RUN chmod 644 /etc/containers/containers.conf; \
- sed -i -e 's|^#mount_program|mount_program|g' -e '/additionalimage.*/a "/var/lib/shared",' -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' /etc/containers/storage.conf
+ sed -i -e 's|^#mount_program|mount_program|g' -e '/additionalimage.*/a "/var/lib/shared",' -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' -e 's|oracle|podman/g' /etc/containers/storage.conf;
 RUN mkdir -p /var/lib/shared/overlay-images /var/lib/shared/overlay-layers /var/lib/shared/vfs-images /var/lib/shared/vfs-layers; touch /var/lib/shared/overlay-images/images.lock; touch /var/lib/shared/overlay-layers/layers.lock; touch /var/lib/shared/vfs-images/images.lock; touch /var/lib/shared/vfs-layers/layers.lock
 
 RUN mkdir -p /home/podman/.local/share/containers/storage /home/podman/images

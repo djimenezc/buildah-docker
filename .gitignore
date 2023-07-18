@@ -1,1 +1,3 @@
 mycontainers/
+/.devspace/cache.yaml
+/.devspace/logs/*
