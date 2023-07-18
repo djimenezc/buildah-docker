@@ -30,7 +30,7 @@ RUN echo \
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y  jq unzip \
-    buildah skopeo podman conmon fuse-overlayfs \
+    buildah skopeo podman libgpgme11 conmon fuse-overlayfs \
     slirp4netns make qemu binfmt-support qemu-user-static qemu-system-arm && \
 #    docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
     if [ "${TARGETARCH}" = "arm64" ]; \

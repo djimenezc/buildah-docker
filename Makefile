@@ -7,6 +7,9 @@ DOCKER_IMAGE_URI=${DOCKER_IMAGE_ID}:${VERSION}
 
 DOCKER_PLATFORMS ?= linux/arm64,linux/amd64,linux/arm64/v8
 
+K8S_NAMESPACE ?= david
+
+
 docker-build:
 	docker buildx build \
 	--platform=$(DOCKER_PLATFORMS) \
@@ -33,3 +36,22 @@ docker-build-arm64:
 	--platform=linux/arm64 \
 	--progress=plain \
 	-t ${DOCKER_IMAGE_ID}:arm64 .
+
+
+k8s-devspace-dev:
+	devspace dev -n $(K8S_NAMESPACE)
+
+k8s-devspace-remove:
+	devspace purge -n $(K8S_NAMESPACE)
+
+k8s-devspace-enter:
+	devspace enter -n $(K8S_NAMESPACE)
+
+k8s-devspace-sync:
+	devspace sync --config=devspace.yaml -n $(K8S_NAMESPACE)
+
+k8s-devspace-ui:
+	devspace ui --config=devspace.yaml -n $(K8S_NAMESPACE)
+
+k8s-devspace-use-context:
+	devspace use context $(K8S_CONTEXT)
