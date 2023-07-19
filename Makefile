@@ -4,12 +4,16 @@ DOCKER_HUB ?= docker.io
 DOCKER_IMAGE_NAME=djimenezc/podman
 DOCKER_IMAGE_ID = $(DOCKER_HUB)/$(DOCKER_IMAGE_NAME)
 DOCKER_IMAGE_URI=${DOCKER_IMAGE_ID}:${VERSION}
+DOCKER_FILE ?= Dockerfile
 
 DOCKER_PLATFORMS ?= linux/arm64,linux/amd64,linux/arm64/v8
 
 K8S_NAMESPACE ?= david
 PLATFORM ?= linux/amd64
+#PLATFORM ?= linux/arm64,linux/amd64
 IMG_NAME ?= test
+IMG_VERSION ?= latest
+
 AWS_REGION ?= eu-west-1
 AWS_ACCOUNT=$(shell aws sts get-caller-identity --query 'Account' --output text)
 HUB_NAME=$(AWS_ACCOUNT).dkr.ecr.${AWS_REGION}.amazonaws.com
@@ -46,7 +50,7 @@ podman-ecr-login:
 	aws ecr get-login-password | podman login --username AWS --password-stdin $(HUB_NAME)
 
 podman-build:
-	buildah build --jobs=4 --platform=${PLATFORM} --manifest shazam .
+	buildah build --jobs=4 --platform=${PLATFORM} --manifest shazam -f $(DOCKER_FILE) .
 	skopeo inspect --raw containers-storage:localhost/shazam | \
 	      jq '.manifests[].platform.architecture'
 	buildah tag localhost/shazam $(REPO_NAME):$(IMG_VERSION)
