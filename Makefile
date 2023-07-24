@@ -10,6 +10,7 @@ DOCKER_PLATFORMS ?= linux/arm64,linux/amd64,linux/arm64/v8
 
 K8S_NAMESPACE ?= david
 PLATFORM ?= linux/amd64
+#PLATFORM ?= linux/arm64
 #PLATFORM ?= linux/arm64,linux/amd64
 IMG_NAME ?= test
 IMG_VERSION ?= latest
@@ -50,12 +51,12 @@ podman-ecr-login:
 	aws ecr get-login-password | podman login --username AWS --password-stdin $(HUB_NAME)
 
 podman-build:
-	buildah build --jobs=4 --platform=${PLATFORM} --manifest shazam -f $(DOCKER_FILE) .
+	podman build --no-cache  --platform=${PLATFORM} --manifest shazam -f $(DOCKER_FILE) .
 	skopeo inspect --raw containers-storage:localhost/shazam | \
 	      jq '.manifests[].platform.architecture'
-	buildah tag localhost/shazam $(REPO_NAME):$(IMG_VERSION)
-	buildah tag localhost/shazam $(REPO_NAME):latest
-	buildah manifest rm localhost/shazam
+	podman tag localhost/shazam $(REPO_NAME):$(IMG_VERSION)
+	podman tag localhost/shazam $(REPO_NAME):latest
+	podman manifest rm localhost/shazam
 
 k8s-devspace-dev:
 	devspace dev -n $(K8S_NAMESPACE)

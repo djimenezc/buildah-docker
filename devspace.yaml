@@ -42,9 +42,17 @@ dev:
     # Sync files between the local filesystem and the development container
     sync:
       - path: ./:/home/podman
+        disableDownload: true
+        excludePaths:
+          - node_modules
+          - cache
+          - .vscode
+          - .idea
+          - .devspace
         uploadExcludePaths:
           - node_modules
           - .git
+          - .local
     # Open a terminal and use the following command to start it
     terminal:
       command: /home/podman/devspace_start.sh
