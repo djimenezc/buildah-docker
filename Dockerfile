@@ -68,7 +68,7 @@ RUN mkdir /home/podman/.nvm && \
 	. "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION} && \
 	. "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION} && \
 	. "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION} && \
-    npm install -g semantic-release
+    npm install -g semantic-release npm@latest
 
 ENV PATH="${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
