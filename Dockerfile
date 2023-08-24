@@ -4,6 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG TARGETARCH
 ARG PODMAN_PACKAGE=podman_4.4.0+ds1-1_${TARGETARCH}.deb
 ARG TARGETARCH
+ARG NVM_VERSION=0.39.5
 
 RUN mkdir -p /etc/apt/keyrings
 
@@ -58,5 +59,17 @@ RUN mkdir -p /home/podman/.local/share/containers/storage /home/podman/images
 RUN chown podman:podman -R /home/podman
 
 ENV _CONTAINERS_USERNS_CONFIGURED=""
+
+ENV NODE_VERSION=18.17.1
+ENV NVM_DIR=/home/podman/.nvm
+
+RUN mkdir /home/podman/.nvm && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | bash && \
+	. "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION} && \
+	. "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION} && \
+	. "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION} && \
+    npm install -g semantic-release
+
+ENV PATH="${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
 WORKDIR /home/podman
